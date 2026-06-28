@@ -20,7 +20,7 @@ That's it. No `sshd` to configure, no `~/.ssh/authorized_keys` to edit, no firew
 
 ---
 
-The terminal turns into a live dashboard — the cmux link, a QR code, a plain `ssh` command for any other client, a countdown bar for its lifetime, and who's connected:
+The terminal turns into a live dashboard — the cmux link, a QR code, a plain `ssh` command and a tappable `ssh://` deep link for any other client, a countdown bar for its lifetime, and who's connected:
 
 ![cmux-ssh-here dashboard](https://raw.githubusercontent.com/viktor-silakov/cmux-ssh-here/main/assets/dashboard.png)
 
@@ -32,7 +32,7 @@ Open the link and cmux connects on its own — one click, straight into the shel
 
 - ⚡ **Zero setup** — one `npx` command, no SSH server administration.
 - 🔗 **One-click connect** — open the printed link on another Mac and cmux drops you straight into the shell.
-- 📲 **Works with any SSH client** — the dashboard also prints a plain `ssh <token>@host -p <port>`, so you can connect from a phone (Termius, Blink), Linux, or Windows — not just cmux.
+- 📲 **Works with any SSH client** — the dashboard also prints a plain `ssh <token>@host -p <port>` and a tappable `ssh://` deep link, so you can connect from a phone (Termius, Blink, WebSSH), Linux, or Windows — not just cmux.
 - 🔑 **No credentials to share** — auth is a one-time token baked into the link.
 - ⏳ **Self-expiring** — the link rotates every 3 minutes; leaked links go stale on their own. Live sessions stay connected.
 - 🎯 **One-time mode** — `--once` locks the link to the first device that connects and rejects everyone else.
@@ -43,7 +43,7 @@ Open the link and cmux connects on its own — one click, straight into the shel
 ## Use cases
 
 - 💻 **Reach your desk machine from the couch** — open a shell on your work Mac from another Mac on the same Wi-Fi.
-- 📲 **Connect from your phone** — open the printed `ssh` command in any SSH app (Termius, Blink); no cmux required.
+- 📲 **Connect from your phone** — tap the `ssh://` link or paste the `ssh` command into any SSH app (Termius, Blink, WebSSH); no cmux required.
 - 👥 **Hand a teammate a shell** — share the link on the office network for quick pairing or debugging; use `--once` so only they get in.
 - 🔧 **One-off access without setup** — debug a box you don't want to permanently open `sshd` on; close the terminal and the door is gone.
 
