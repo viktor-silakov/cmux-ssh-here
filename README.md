@@ -14,6 +14,8 @@ npx cmux-ssh-here
 
 That's it. No `sshd` to configure, no `~/.ssh/authorized_keys` to edit, no firewall dance.
 
+> **New to cmux?** [cmux](https://cmux.com) is a terminal/workspace app for macOS. The deep link this tool prints opens an SSH session right inside it — so the device you connect *from* just needs cmux installed.
+
 ---
 
 The terminal turns into a live dashboard — the link, a scannable QR code, a countdown bar for its lifetime, and who's connected:
@@ -34,6 +36,13 @@ Open the link and cmux connects on its own — one click, straight into the shel
 - 👀 **Live dashboard** — see the current link, a countdown bar, and every connected client at a glance.
 - 🧩 **Real SSH** — full PTY shell, `scp`/`sftp`, and the exec channel cmux needs to bootstrap remote workspaces.
 - 🪟 **Persistent sessions** — when `tmux` is present, sessions survive disconnects and are shared across connections.
+
+## Use cases
+
+- 💻 **Reach your desk machine from the couch** — open a shell on your work Mac from an iPad or laptop on the same Wi-Fi.
+- 📱 **Connect from your phone** — scan the QR code and you're in a terminal, no typing an IP or password.
+- 👥 **Hand a teammate a shell** — share the link on the office network for quick pairing or debugging; use `--once` so only they get in.
+- 🔧 **One-off access without setup** — debug a box you don't want to permanently open `sshd` on; close the terminal and the door is gone.
 
 ## Quick start
 
@@ -65,6 +74,10 @@ The device you open the link from just needs [cmux](https://cmux.com) installed.
 ## Security
 
 ⚠️ **The token in the link is a bearer secret that grants a shell as your user.** Use it on a trusted local network only. Don't publish the link or send it over untrusted channels. Close the terminal and the token and host key are gone.
+
+- The server binds to `0.0.0.0`, so it's reachable by **everyone on your local network** — anyone who gets the token can connect while it's live. Only run it on networks you trust.
+- Use `--once` to lock the link to the first device that connects and reject the rest.
+- The link self-expires every 3 minutes (configurable via `CMUX_SSH_TTL`); a token someone copied earlier stops working on its own.
 
 ## Options
 
