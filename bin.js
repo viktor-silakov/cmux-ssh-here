@@ -379,14 +379,16 @@ server.listen(PORT, "0.0.0.0", function () {
       const top = Math.floor((H - lines.length) / 2);
       return [...Array(top).fill(""), ...lines, ...Array(H - lines.length - top).fill("")];
     };
-    const centerStr = (s, w) => {
+    // black text on light-magenta background, padded to the QR width
+    const headCell = (s, w) => {
       const left = Math.floor((w - s.length) / 2);
-      return " ".repeat(Math.max(0, left)) + s;
+      const right = Math.max(0, w - s.length - left);
+      return " ".repeat(Math.max(0, left)) + `\x1b[30;105m${s}\x1b[0m` + " ".repeat(right);
     };
     const A = center(la, h), B = center(lb, h);
     const sp = " ".repeat(gap);
     const body = A.map((l, i) => "  " + l.padEnd(wa) + sp + (B[i] || "").padEnd(wb));
-    const head = "  " + centerStr(labelA, wa).padEnd(wa) + sp + centerStr(labelB, wb).padEnd(wb);
+    const head = "  " + headCell(labelA, wa) + sp + headCell(labelB, wb);
     return [head, "", ...body].join("\n");
   };
 
