@@ -363,14 +363,25 @@ server.listen(PORT, "0.0.0.0", function () {
     return `[${"█".repeat(filled)}${"░".repeat(W - filled)}]`;
   };
 
-  // ASCII QR of the current cmux deep link.
-  const qrFor = (text) => {
+  // Two QRs side by side (cmux deep link + ssh://), the shorter one vertically
+  // centered — keeps the dashboard compact instead of stacking them.
+  const qrLines = (text) => {
     let out = "";
     qrcodeTerminal.generate(text, { small: true }, (q) => (out = q));
-    return out
-      .split("\n")
-      .map((l) => "  " + l)
-      .join("\n");
+    return out.replace(/\n+$/, "").split("\n");
+  };
+  const qrSideBySide = (a, b, gap = 4) => {
+    const la = qrLines(a), lb = qrLines(b);
+    const wa = Math.max(...la.map((l) => l.length));
+    const wb = Math.max(...lb.map((l) => l.length));
+    const h = Math.max(la.length, lb.length);
+    const center = (lines, H) => {
+      const top = Math.floor((H - lines.length) / 2);
+      return [...Array(top).fill(""), ...lines, ...Array(H - lines.length - top).fill("")];
+    };
+    const A = center(la, h), B = center(lb, h);
+    const sp = " ".repeat(gap);
+    return A.map((l, i) => "  " + l.padEnd(wa) + sp + (B[i] || "").padEnd(wb)).join("\n");
   };
 
   // Collapse cmux's several SSH connections from one machine into one row per IP.
@@ -396,16 +407,13 @@ server.listen(PORT, "0.0.0.0", function () {
       "",
       `  cmux-ssh-here — shell as ${user} over the LAN${mode}`,
       "",
-      "  Open in cmux:",
+      "  Open in cmux:                          Or with any SSH client:",
       `  ${link}`,
-      "",
-      qrFor(link),
-      "",
-      "  Or with any SSH client — copy the command, or scan/tap to open:",
       `  ${buildSsh()}`,
       `  ${buildSshUrl()}`,
       "",
-      qrFor(buildSshUrl()),
+      qrSideBySide(link, buildSshUrl()),
+      "  scan: cmux deep link (left) · ssh:// for any SSH app (right)",
       "",
     ];
     if (consumed) lines.push(`  🔒 One-time link used — locked to ${lockedIp}.`);
