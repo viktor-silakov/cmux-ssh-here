@@ -370,7 +370,7 @@ server.listen(PORT, "0.0.0.0", function () {
     qrcodeTerminal.generate(text, { small: true }, (q) => (out = q));
     return out.replace(/\n+$/, "").split("\n");
   };
-  const qrSideBySide = (a, b, gap = 4) => {
+  const qrSideBySide = (a, b, labelA, labelB, gap = 4) => {
     const la = qrLines(a), lb = qrLines(b);
     const wa = Math.max(...la.map((l) => l.length));
     const wb = Math.max(...lb.map((l) => l.length));
@@ -379,9 +379,15 @@ server.listen(PORT, "0.0.0.0", function () {
       const top = Math.floor((H - lines.length) / 2);
       return [...Array(top).fill(""), ...lines, ...Array(H - lines.length - top).fill("")];
     };
+    const centerStr = (s, w) => {
+      const left = Math.floor((w - s.length) / 2);
+      return " ".repeat(Math.max(0, left)) + s;
+    };
     const A = center(la, h), B = center(lb, h);
     const sp = " ".repeat(gap);
-    return A.map((l, i) => "  " + l.padEnd(wa) + sp + (B[i] || "").padEnd(wb)).join("\n");
+    const body = A.map((l, i) => "  " + l.padEnd(wa) + sp + (B[i] || "").padEnd(wb));
+    const head = "  " + centerStr(labelA, wa).padEnd(wa) + sp + centerStr(labelB, wb).padEnd(wb);
+    return [head, "", ...body].join("\n");
   };
 
   // Collapse cmux's several SSH connections from one machine into one row per IP.
@@ -412,7 +418,8 @@ server.listen(PORT, "0.0.0.0", function () {
       `  ${buildSsh()}`,
       `  ${buildSshUrl()}`,
       "",
-      qrSideBySide(link, buildSshUrl()),
+      qrSideBySide(link, buildSshUrl(), "cmux deep link", "ssh:// (any SSH app)"),
+      "",
       "  scan: cmux deep link (left) · ssh:// for any SSH app (right)",
       "",
     ];
