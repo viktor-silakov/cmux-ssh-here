@@ -16,7 +16,7 @@ That's it. No `sshd` to configure, no `~/.ssh/authorized_keys` to edit, no firew
 
 ---
 
-The terminal turns into a live dashboard — the link, a countdown bar for its lifetime, and who's connected:
+The terminal turns into a live dashboard — the link, a scannable QR code, a countdown bar for its lifetime, and who's connected:
 
 ![cmux-ssh-here dashboard](https://raw.githubusercontent.com/viktor-silakov/cmux-ssh-here/main/assets/dashboard.png)
 
@@ -27,8 +27,10 @@ Open the link and cmux connects on its own — one click, straight into the shel
 ## Why you'll like it
 
 - ⚡ **Zero setup** — one `npx` command, no SSH server administration.
+- 📱 **Scan to connect** — a QR code in the terminal opens the link on a phone or tablet.
 - 🔑 **No credentials to share** — auth is a one-time token baked into the link.
 - ⏳ **Self-expiring** — the link rotates every 3 minutes; leaked links go stale on their own. Live sessions stay connected.
+- 🎯 **One-time mode** — `--once` locks the link to the first device that connects and rejects everyone else.
 - 👀 **Live dashboard** — see the current link, a countdown bar, and every connected client at a glance.
 - 🧩 **Real SSH** — full PTY shell, `scp`/`sftp`, and the exec channel cmux needs to bootstrap remote workspaces.
 - 🪟 **Persistent sessions** — when `tmux` is present, sessions survive disconnects and are shared across connections.
@@ -66,6 +68,7 @@ The device you open the link from just needs [cmux](https://cmux.com) installed.
 
 ## Options
 
+- `npx cmux-ssh-here --once` — single-use link: locks to the first device that connects, rejects any other.
 - `PORT=2222 npx cmux-ssh-here` — fixed port (random free port by default).
 - `CMUX_SSH_TTL=600 npx cmux-ssh-here` — link/token lifetime in seconds before regeneration (default 180).
 - `CMUX_SSH_DEBUG=1 npx cmux-ssh-here` — log incoming auth/env/exec/shell requests to stderr (disables the live dashboard).

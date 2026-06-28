@@ -18,6 +18,7 @@ import { spawn } from "node:child_process";
 import { chmodSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
+import qrcodeTerminal from "qrcode-terminal";
 
 // ponytail: the host side needs a POSIX shell + scp/exec semantics, and cmux's
 // own remote daemon only ships linux/darwin/freebsd builds — so a Windows host
@@ -47,6 +48,13 @@ const regenerateToken = () => {
   expiry = Date.now() + TTL_SECONDS * 1000;
 };
 regenerateToken();
+
+// --once: single-use link. After the first client connects, lock to its IP and
+// stop rotating — new machines are rejected, but that client's several
+// connections (cmux opens ControlMaster + daemon + probes) keep working.
+const ONCE = process.argv.includes("--once");
+let consumed = false;
+let lockedIp = null;
 
 // Active authenticated connections, shown live in the server terminal.
 const sessions = new Map();
@@ -258,13 +266,19 @@ let render = () => {}; // assigned once the server is listening (knows ip/port)
 const server = new Server(serverCfg, (client, info) => {
   client.on("authentication", (ctx) => {
     debug("auth", ctx.method, ctx.username);
-    return ctx.username === token ? ctx.accept() : ctx.reject();
+    // Correct token, plus (in --once after consumption) only the locked-in IP.
+    const ok = ctx.username === token && (!consumed || info?.ip === lockedIp);
+    return ok ? ctx.accept() : ctx.reject();
   });
   client.on("ready", () => {
     // ponytail: just track the connection; the 5s timer redraws — no per-event
     // repaint (that was the screen-churn that broke copying).
     const id = nextSid++;
     sessions.set(id, { ip: info?.ip || "?", since: Date.now() });
+    if (ONCE && !consumed) {
+      consumed = true;
+      lockedIp = info?.ip || "?";
+    }
     client.on("close", () => sessions.delete(id));
   });
   client.on("session", (accept) => {
@@ -343,6 +357,16 @@ server.listen(PORT, "0.0.0.0", function () {
     return `[${"█".repeat(filled)}${"░".repeat(W - filled)}]`;
   };
 
+  // ASCII QR of the current link — scan with a phone/tablet to open in cmux.
+  const qrFor = (text) => {
+    let out = "";
+    qrcodeTerminal.generate(text, { small: true }, (q) => (out = q));
+    return out
+      .split("\n")
+      .map((l) => "  " + l)
+      .join("\n");
+  };
+
   // Collapse cmux's several SSH connections from one machine into one row per IP.
   const sessionRows = () => {
     const byIp = new Map();
@@ -356,19 +380,25 @@ server.listen(PORT, "0.0.0.0", function () {
     );
   };
 
+  const mode = ONCE ? " (one-time link)" : "";
+
   render = () => {
     if (!liveUI) return;
     const rem = remainingSec();
+    const link = buildLink();
     const lines = [
       "",
-      `  cmux-ssh-here — shell as ${user} over the LAN`,
+      `  cmux-ssh-here — shell as ${user} over the LAN${mode}`,
       "",
-      "  Open in cmux:",
-      `  ${buildLink()}`,
+      "  Open in cmux (or scan to open on a phone/tablet):",
+      `  ${link}`,
       "",
-      `  Link valid  ${bar(rem)} ${rem}s`,
+      qrFor(link),
       "",
     ];
+    if (consumed) lines.push(`  🔒 One-time link used — locked to ${lockedIp}.`);
+    else lines.push(`  Link valid  ${bar(rem)} ${rem}s`);
+    lines.push("");
     const rows = sessionRows();
     if (rows.length) lines.push(`  Connected (${rows.length}):`, ...rows);
     else lines.push("  No active sessions yet.");
@@ -380,9 +410,10 @@ server.listen(PORT, "0.0.0.0", function () {
   if (liveUI) render();
   else console.log(`\n  Open in cmux (regenerates in ${remainingSec()}s):\n  ${buildLink()}\n`);
 
-  // Refresh every 5s: regenerate the link when it expires, then redraw.
+  // Refresh every 5s: regenerate the link when it expires (unless a one-time
+  // link has already been consumed — then it's frozen), then redraw.
   setInterval(() => {
-    if (remainingSec() <= 0) {
+    if (!consumed && remainingSec() <= 0) {
       regenerateToken();
       if (!liveUI) console.log(`\n  [link regenerated]\n  ${buildLink()}\n`);
     }
