@@ -1,0 +1,39 @@
+{
+  "name": "cmux-ssh-here",
+  "version": "0.6.0",
+  "description": "Spin up a token-auth SSH server and print a cmux deep link to connect over LAN",
+  "type": "module",
+  "bin": {
+    "cmux-ssh-here": "bin.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "files": [
+    "bin.js",
+    "README.md"
+  ],
+  "keywords": [
+    "cmux",
+    "ssh",
+    "deep-link",
+    "lan",
+    "remote"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viktor-silakov/cmux-ssh-here.git"
+  },
+  "homepage": "https://github.com/viktor-silakov/cmux-ssh-here#readme",
+  "bugs": {
+    "url": "https://github.com/viktor-silakov/cmux-ssh-here/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "node-pty": "^1.0.0",
+    "ssh2": "^1.16.0"
+  }
+}
