@@ -31,7 +31,7 @@ Open the link and cmux connects on its own — one click, straight into the shel
 ## Why you'll like it
 
 - ⚡ **Zero setup** — one `npx` command, no SSH server administration.
-- 📱 **Scan to connect** — a QR code in the terminal opens the link on a phone or tablet.
+- 🔗 **One-click connect** — open the printed link on another Mac and cmux drops you straight into the shell.
 - 🔑 **No credentials to share** — auth is a one-time token baked into the link.
 - ⏳ **Self-expiring** — the link rotates every 3 minutes; leaked links go stale on their own. Live sessions stay connected.
 - 🎯 **One-time mode** — `--once` locks the link to the first device that connects and rejects everyone else.
@@ -41,8 +41,7 @@ Open the link and cmux connects on its own — one click, straight into the shel
 
 ## Use cases
 
-- 💻 **Reach your desk machine from the couch** — open a shell on your work Mac from an iPad or laptop on the same Wi-Fi.
-- 📱 **Connect from your phone** — scan the QR code and you're in a terminal, no typing an IP or password.
+- 💻 **Reach your desk machine from the couch** — open a shell on your work Mac from another Mac on the same Wi-Fi.
 - 👥 **Hand a teammate a shell** — share the link on the office network for quick pairing or debugging; use `--once` so only they get in.
 - 🔧 **One-off access without setup** — debug a box you don't want to permanently open `sshd` on; close the terminal and the door is gone.
 
