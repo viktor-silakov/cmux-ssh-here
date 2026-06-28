@@ -343,6 +343,9 @@ server.listen(PORT, "0.0.0.0", function () {
     });
     return `https://cmux.com/deeplink/ssh?${params}`;
   };
+  // Plain SSH command for any client (phone via Termius/Blink, Linux, Windows).
+  // Token is the username; rebuilt each render so it tracks rotation.
+  const buildSsh = () => `ssh ${token}@${ip} -p ${port}`;
 
   // ponytail: in debug mode skip the dashboard so logs stay readable.
   const liveUI = !process.env.CMUX_SSH_DEBUG;
@@ -357,7 +360,7 @@ server.listen(PORT, "0.0.0.0", function () {
     return `[${"█".repeat(filled)}${"░".repeat(W - filled)}]`;
   };
 
-  // ASCII QR of the current link — scan with a phone/tablet to open in cmux.
+  // ASCII QR of the current cmux deep link.
   const qrFor = (text) => {
     let out = "";
     qrcodeTerminal.generate(text, { small: true }, (q) => (out = q));
@@ -390,10 +393,13 @@ server.listen(PORT, "0.0.0.0", function () {
       "",
       `  cmux-ssh-here — shell as ${user} over the LAN${mode}`,
       "",
-      "  Open in cmux (or scan to open on a phone/tablet):",
+      "  Open in cmux:",
       `  ${link}`,
       "",
       qrFor(link),
+      "",
+      "  Or with any SSH client (phone, Linux, Windows):",
+      `  ${buildSsh()}`,
       "",
     ];
     if (consumed) lines.push(`  🔒 One-time link used — locked to ${lockedIp}.`);
@@ -408,7 +414,7 @@ server.listen(PORT, "0.0.0.0", function () {
   };
 
   if (liveUI) render();
-  else console.log(`\n  Open in cmux (regenerates in ${remainingSec()}s):\n  ${buildLink()}\n`);
+  else console.log(`\n  Open in cmux (regenerates in ${remainingSec()}s):\n  ${buildLink()}\n  Or any SSH client:\n  ${buildSsh()}\n`);
 
   // Refresh every 5s: regenerate the link when it expires (unless a one-time
   // link has already been consumed — then it's frozen), then redraw.
