@@ -29,4 +29,11 @@ jobs:
       - run: npm install -g npm@latest # trusted publishing requires npm >= 11.5.1
       - run: npm ci
       - run: npm test
-      - run: npm publish --access public # OIDC handles auth; provenance is automatic
+      - name: Publish if this version is new
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "cmux-ssh-here@$VERSION" version >/dev/null 2>&1; then
+            echo "cmux-ssh-here@$VERSION already published — skipping."
+          else
+            npm publish --access public # OIDC handles auth; provenance is automatic
+          fi
