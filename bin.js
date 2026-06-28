@@ -401,9 +401,11 @@ server.listen(PORT, "0.0.0.0", function () {
       "",
       qrFor(link),
       "",
-      "  Or with any SSH client (copy the command, or tap the link):",
+      "  Or with any SSH client — copy the command, or scan/tap to open:",
       `  ${buildSsh()}`,
       `  ${buildSshUrl()}`,
+      "",
+      qrFor(buildSshUrl()),
       "",
     ];
     if (consumed) lines.push(`  🔒 One-time link used — locked to ${lockedIp}.`);
