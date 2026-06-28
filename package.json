@@ -1,6 +1,6 @@
 {
   "name": "cmux-ssh-here",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "Spin up a token-auth SSH server and print a cmux deep link to connect over LAN",
   "type": "module",
   "bin": {
