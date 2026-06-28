@@ -6,6 +6,8 @@
 [![CI](https://github.com/viktor-silakov/cmux-ssh-here/actions/workflows/ci.yml/badge.svg)](https://github.com/viktor-silakov/cmux-ssh-here/actions/workflows/ci.yml)
 [![license](https://img.shields.io/npm/l/cmux-ssh-here.svg)](./LICENSE)
 
+![cmux-ssh-here demo](https://raw.githubusercontent.com/viktor-silakov/cmux-ssh-here/main/assets/demo.gif)
+
 `cmux-ssh-here` spins up a throwaway, token-authenticated SSH server and prints a [cmux](https://cmux.com) deep link. Send the link to any device on your LAN, open it in cmux, and you're instantly in a terminal on this machine. When you're done, hit `Ctrl-C` — the server, token, and host key vanish.
 
 ```bash
