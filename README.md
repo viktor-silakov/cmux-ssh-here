@@ -20,13 +20,7 @@ That's it. No `sshd` to configure, no `~/.ssh/authorized_keys` to edit, no firew
 
 ---
 
-The terminal turns into a live dashboard — the cmux link, a QR code, a plain `ssh` command and a tappable `ssh://` deep link for any other client, a countdown bar for its lifetime, and who's connected:
-
-![cmux-ssh-here dashboard](https://raw.githubusercontent.com/viktor-silakov/cmux-ssh-here/main/assets/dashboard.png)
-
-Open the link and cmux connects on its own — one click, straight into the shell:
-
-![Open in cmux](https://raw.githubusercontent.com/viktor-silakov/cmux-ssh-here/main/assets/open-in-cmux.png)
+The terminal turns into a live dashboard — the cmux link, two QR codes (cmux deep link + `ssh://`), a plain `ssh` command, a countdown bar for the link's lifetime, and who's connected. Open the link and cmux connects on its own — one click, straight into the shell.
 
 ## Why you'll like it
 
